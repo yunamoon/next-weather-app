@@ -1,12 +1,22 @@
 import Link from "next/link";
+import style from "./style.module.css";
+import { getCurrentWeather } from "@/utils/getCurrentWeather";
+import getTime from "@/utils/getTime";
+import RevalidateButton from "./components/RevalidateButton";
 
-export default function Home() {
+export default async function Home() {
+  const res = await getCurrentWeather("seoul");
+  const time = await getTime(res.location.tz_id);
+
   return (
     <>
-      <h1>메인</h1>
-      <ul>
+      <h1>날씨앱 메인</h1>
+
+      <h3>{time.dateTime}</h3>
+      <ul className={style.list}>
         <li>
           <Link href={"/seoul"}>서울 </Link>
+          <span>{res.current.condition.text}</span>
         </li>
         <li>
           <Link href={"/newyork"}>뉴욕 </Link>
@@ -15,6 +25,8 @@ export default function Home() {
           <Link href={"/london"}>런던 </Link>
         </li>
       </ul>
+
+      <RevalidateButton tag={"time"} />
     </>
   );
 }
